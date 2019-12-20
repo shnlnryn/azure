@@ -1,0 +1,24 @@
+#Disable Exchange legacy authentication via Azure automation.
+
+$credObject = Get-AutomationPSCredential -Name 'your_automation_account'
+
+Connect-MsolService -Credential $credObject
+
+$Session = New-PSSession –ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid -Credential $Credobject -Authentication Basic -AllowRedirection
+Import-PSSession -Session $Session -DisableNameChecking:$true -AllowClobber:$true | Out-Null
+
+
+#Get users based on specific O365 domain ( if you have multiple domains in the tenant)
+$Users= get-user -ResultSize unlimited | where {(($_.userprincipalname -like "*mydomain1.com”) -or ($_.userprincipalname -like "*mydomain2.com”)) -and $_.authenticationpolicy -eq $null} | Select-Object userprincipalname, authenticationpolicy
+
+
+
+foreach ($User in $Users){
+
+$User.userprincipalname
+
+#Apply Exchange authentication policy
+set-user -identity $User.userprincipalname -authenticationpolicy "Disable-All-Basic-Auth"
+
+
+}
