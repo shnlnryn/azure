@@ -1,3 +1,7 @@
+## This Automation script runs a report on when users O365 Proplus license was activated and, generates a csv file and uploads to Azure Storage as a blob.
+
+## Azure Logic Apps copies the CSV file from Azure Storage to a Sharepoint Online document library.
+
 
 
 $creds = Get-AutomationPSCredential -Name "secazautomation"
